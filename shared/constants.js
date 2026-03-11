@@ -1,0 +1,37 @@
+// Shared constants used across the project
+
+export const CABIN_CLASSES = {
+  ECONOMY: 'ECONOMY',
+  PREMIUM_ECONOMY: 'PREMIUM_ECONOMY',
+  BUSINESS: 'BUSINESS',
+  FIRST: 'FIRST',
+};
+
+export const RECOMMENDATIONS = {
+  BUY_NOW: 'BUY_NOW',
+  WAIT: 'WAIT',
+  PRICE_DROPPING: 'PRICE_DROPPING',
+  PRICE_RISING: 'PRICE_RISING',
+  LAST_CHANCE: 'LAST_CHANCE',
+};
+
+export const PRICE_ZONES = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  PEAK: 'PEAK',
+};
+
+export const EVENT_TYPES = {
+  HOLIDAY: 'HOLIDAY',
+  SCHOOL_BREAK: 'SCHOOL_BREAK',
+  SPORTING: 'SPORTING',
+  CONFERENCE: 'CONFERENCE',
+  OTHER: 'OTHER',
+};
+
+export const NOTIFICATION_METHODS = {
+  EMAIL: 'email',
+  PUSH: 'push',
+  SMS: 'sms',
+};
