@@ -18,38 +18,44 @@ class GeminiService {
    * @param {Object} data.priceAnalysis - Amadeus price metrics (optional)
    */
   async getPrediction({ priceHistory, routeInfo, events, priceAnalysis }) {
-    const prompt = `You are an expert flight pricing analyst. You analyze historical price trends, seasonal patterns, events, and airline pricing strategies to recommend the optimal time to buy a flight ticket.
+    const prompt = `You are an elite Lead Flight Pricing Quantitative Analyst. Your task is to perform a multidimensional analysis of this flight route and deliver a high-accuracy buy/wait recommendation.
 
-Analyze this flight route and recommend the best time to buy:
+**YOUR OBJECTIVE:** Analyze historical price fluctuations, find the absolute best travel-buying window (Best Buy Date), and predict exactly what the price will be on that date.
 
-**Route:** ${routeInfo.origin} → ${routeInfo.destination}
-**Travel Date:** ${routeInfo.departureDate}
-**Cabin Class:** ${routeInfo.cabinClass || 'ECONOMY'}
-**Days Until Departure:** ${this._daysUntil(routeInfo.departureDate)}
+### INPUT DATA FOR ANALYSIS:
+**Route:** ${routeInfo.origin} → ${routeInfo.destination} (Cabin: ${routeInfo.cabinClass || 'ECONOMY'})
+**Travel Departure Date:** ${routeInfo.departureDate}
+**Today's Context:** ${new Date().toISOString().split('T')[0]} (${this._daysUntil(routeInfo.departureDate)} days until departure)
 
-**Price History (observed prices over time):**
+**Price History (Observed Snapshots):**
 ${priceHistory.length > 0 
   ? priceHistory.map(p => `  ${p.date}: £${p.price}`).join('\n')
-  : '  No historical data yet — use price analysis and general patterns.'}
+  : '  NO SNAPSHOTS YET: Rely on Amadeus metrics and seasonal airline pricing benchmarks (e.g., 21-day advance booking rules).'}
 
-**Current Price Analysis (from Amadeus):**
-${priceAnalysis ? JSON.stringify(priceAnalysis, null, 2) : 'Not available'}
+**Market Benchmarks (Amadeus API Ground Truth):**
+${priceAnalysis ? JSON.stringify(priceAnalysis, null, 2) : 'Market metrics not available.'}
 
-**Upcoming Events Near Travel Date:**
+**External Volatility Factors (Events/Holidays):**
 ${events.length > 0 
-  ? events.map(e => `  ${e.name} (${e.start_date}${e.end_date ? ' to ' + e.end_date : ''}) — Impact: ${e.impact}`).join('\n')
-  : '  No major events detected'}
+  ? events.map(e => `  - ${e.name}: ${e.start_date}${e.end_date ? ' to ' + e.end_date : ''} (Impact Score: ${e.impact})`).join('\n')
+  : '  No major external volatility detected.'}
 
-Your output must be ONLY a valid JSON object (no markdown, no code fences, no extra text) with these fields:
+### YOUR ANALYTIC LOGIC:
+1. **Trend Detection:** Observe the "Price History" snapshots. Is the slope increasing, decreasing, or volatile?
+2. **Seasonal Window:** Use the departure date and current date to find if we are in the "Golden Booking Window" (usually 1-3 months out for international, 3-6 weeks for domestic).
+3. **Event Impact:** If a high-impact event is nearby, anticipate restricted availability and rising prices.
+4. **Target Calculation:** Based on historical quartiles in the Price Analysis, find the lower-bound target (£) that is realistically achievable before departure.
+
+### OUTPUT FORMAT (STRICT JSON ONLY):
 {
   "recommendation": "BUY_NOW" | "WAIT" | "PRICE_DROPPING" | "PRICE_RISING" | "LAST_CHANCE",
-  "predicted_best_date": "YYYY-MM-DD",
-  "predicted_price": number,
-  "confidence": number (0.0 to 1.0),
-  "price_zone": "LOW" | "MEDIUM" | "HIGH" | "PEAK",
-  "reasoning": "string explaining your analysis",
+  "predicted_best_date": "YYYY-MM-DD (The date you expect the price to hit its absolute floor)",
+  "predicted_price": number (Your predicted price in £ on the predicted_best_date),
+  "confidence": number (0.0 to 1.0 based on data density),
+  "price_zone": "LOW" | "MEDIUM" | "HIGH" | "PEAK" (Position relative to Amadeus quartiles),
+  "reasoning": "A professional analytical breakdown of the trend, seasonal window, and event impact.",
   "factors": ["factor1", "factor2", ...],
-  "summary": "One-line human-readable recommendation"
+  "summary": "One-line actionable advice"
 }`;
 
     try {
